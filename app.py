@@ -1,29 +1,25 @@
-import streamlit as st
-import pandas as pd
 import pickle
+import pandas as pd
+import streamlit as st
 
 # Correct the model path
-model_path = "rf_model L (1).pkl"  # Update to match your model file
+model_path = "rf_model L(1).pkl"  # Ensure this matches your model file
 
 # Try loading the model
 try:
     with open(model_path, "rb") as file:
         model = pickle.load(file)
-    st.write(f"Loaded model type: {type(model)}")
+    st.write(f"Model loaded successfully. Type: {type(model)}")
+    
+    # Check if the model has the 'predict' method after loading
+    if hasattr(model, 'predict'):
+        st.write("The model has a 'predict' method.")
+    else:
+        st.error("Loaded object is not a valid model. Check 'rf_model L(1).pkl'.")
 except FileNotFoundError:
-    st.error("Model file not found. Please ensure 'rf_model L (1).pkl' is in the correct directory.")
+    st.error(f"Model file '{model_path}' not found. Please ensure it's in the correct directory.")
 except Exception as e:
     st.error(f"An error occurred while loading the model: {e}")
-
-# Check if model has the .predict() method
-if not hasattr(model, 'predict'):
-    st.error("Loaded object is not a valid model. Check 'rf_model L (1).pkl'.")
-
-# App title
-st.title("Model Deployment with Streamlit")
-
-# Sidebar for user input
-st.sidebar.header("Input Parameters")
 
 # Function to get user input for the dataset
 def user_input_features():
@@ -86,19 +82,21 @@ def user_input_features():
     features = pd.DataFrame(data, index=[0])
     return features
 
+# Ensure the model is loaded before proceeding
+if 'model' in locals():
+    # Load user input
+    inx = user_input_features()
 
-# Load user input
-inx = user_input_features()
+    # Display input
+    st.subheader("User Input:")
+    st.write(inx)
 
-# Display input
-st.subheader("User Input:")
-st.write(inx)
-
-# Make prediction
-if st.button("Predict"):
-    if hasattr(model, 'predict'):
+    # Make prediction
+    if st.button("Predict"):
         prediction = model.predict(inx)
         st.subheader("Prediction:")
         st.write(prediction[0])
-    else:
-        st.error("Model does not have a 'predict' method. Please check your model.")
+
+else:
+    st.error("Model is not loaded. Please check the file path or loading process.")
+
