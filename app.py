@@ -3,7 +3,7 @@ import pandas as pd
 import streamlit as st
 
 # Correct the model path
-model_path = "rf_model L(1).pkl"  # Ensure this matches your model file
+model_path = "rf_model.pkl"  # Ensure this matches your model file
 
 # Try loading the model
 try:
@@ -15,7 +15,7 @@ try:
     if hasattr(model, 'predict'):
         st.write("The model has a 'predict' method.")
     else:
-        st.error("Loaded object is not a valid model. Check 'rf_model L(1).pkl'.")
+        st.error("Loaded object is not a valid model. Check 'rf_model.pkl'.")
 except FileNotFoundError:
     st.error(f"Model file '{model_path}' not found. Please ensure it's in the correct directory.")
 except Exception as e:
